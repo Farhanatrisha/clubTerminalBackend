@@ -24,6 +24,7 @@ async function run() {
     const database = client.db('elearning');
     const usercollection = database.collection('userdetails');
     const coursecollection = database.collection('courselist');
+    const admincollection = database.collection('admindetails')
     //all course show details
     app.get('/coursedetails', async (req, res) => {
       const cursor = coursecollection.find({});
@@ -50,6 +51,8 @@ async function run() {
       const result = await coursecollection.findOne(query);
       res.json(result)
     })
+
+
 
      //for delete any course
      app.delete('/coursedetails/:id', async (req, res) => {
@@ -126,6 +129,18 @@ async function run() {
       const result = await usercollection.updateOne(filter, updateDoc, options);
       res.json(result);
 
+    })
+
+    // this for finding admin dashboard
+    app.get('/admin/:email', async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await admincollection.findOne(query);
+      let isadmin = false;
+      if (user?.role === 'admin') {
+        isadmin = true;
+      }
+      res.json({ role: isadmin });
     })
   }
   finally {
